@@ -1,0 +1,23 @@
+RegionObserverExample 功能：
+    1、Get时，对rowkey=admin001的HBase数据进行屏蔽
+    2、Scan时， 对rowkey=admin001的HBase数据进行过滤
+
+SumEndPoint 功能：
+    计算员工总薪水(先计算每个region上的员工总薪水,然会汇总所有region结果)
+
+# 动态载入协处理器
+disable 'wf:test'
+# observer
+alter 'wf:test', METHOD => 'table_att', 'Coprocessor'=>'hdfs://172.30.6.14:8020/user/root/wf/hbase-coprocessor/razor-1.0-SNAPSHOT.jar|com.cobub.server.coprocessor.RegionObserverExample|1111111111'
+# endpoint
+alter 'wf:employee', METHOD => 'table_att', 'Coprocessor'=>'hdfs://172.30.6.14:8020/user/root/wf/hbase-coprocessor/endpoint/razor-1.0-SNAPSHOT.jar|com.cobub.server.coprocessor.SumEndPoint|1111111111'
+enable 'wf:test'
+
+
+# 删除协处理器
+disable 'wf:test'
+
+alter 'wf:test', METHOD => 'table_att_unset', NAME => 'coprocessor$1'
+alter 'wf:employee', METHOD => 'table_att_unset', NAME => 'coprocessor$1'
+
+enable 'wf:test'

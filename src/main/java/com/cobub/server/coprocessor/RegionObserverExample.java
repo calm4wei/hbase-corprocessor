@@ -1,4 +1,4 @@
-package com.cobub.server;
+package com.cobub.server.coprocessor;
 
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
@@ -21,6 +21,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 官网示例：Observer
+ * 功能：
+ * 1、Get时，对rowkey=admin001的HBase数据进行屏蔽
+ * 2、Scan时， 对rowkey=admin001的HBase数据进行过滤
+ */
 public class RegionObserverExample extends BaseRegionObserver {
 
     private static final byte[] ADMIN = Bytes.toBytes("admin001");
@@ -57,8 +63,8 @@ public class RegionObserverExample extends BaseRegionObserver {
     }
 
     @Override
-    public boolean postScannerNext(final ObserverContext e, final InternalScanner s,
-            final List results, final int limit, final boolean hasMore) throws IOException {
+    public boolean postScannerNext(final ObserverContext e, final InternalScanner s, final List results,
+            final int limit, final boolean hasMore) throws IOException {
         Result result = null;
         Iterator iterator = results.iterator();
         while (iterator.hasNext()) {

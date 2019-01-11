@@ -5,7 +5,6 @@ import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.google.protobuf.Service;
 import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.Coprocessor;
 import org.apache.hadoop.hbase.CoprocessorEnvironment;
 import org.apache.hadoop.hbase.client.Scan;
@@ -22,6 +21,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 官网示例：Enpoint
+ * 功能：计算员工总薪水(先计算每个region上的员工总薪水,然会汇总所有region结果)
+ */
 public class SumEndPoint extends Sum.SumService implements Coprocessor, CoprocessorService {
 
     private static Logger logger = LoggerFactory.getLogger(SumEndPoint.class);
@@ -63,9 +66,12 @@ public class SumEndPoint extends Sum.SumService implements Coprocessor, Coproces
                 hasMore = scanner.next(results);
                 logger.info("results.size=" + results.size());
                 for (Cell cell : results) {
-                    logger.info("family=" + Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength()));
-                    logger.info("column=" + Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength()));
-                    logger.info("value=" + Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
+                    logger.info("family=" + Bytes
+                            .toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength()));
+                    logger.info("column=" + Bytes
+                            .toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength()));
+                    logger.info("value=" + Bytes
+                            .toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
                     sum = sum + Bytes.toInt(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
                 }
                 logger.info("sum=" + sum);
